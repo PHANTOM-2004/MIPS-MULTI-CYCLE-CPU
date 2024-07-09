@@ -39,6 +39,7 @@ module controller(
     output next_update_ir,
     /*--------------------*/
     output reg [4:0] cp0_cause_code,
+    output GR_R1_ADDR_RD,
     /*--------------------*/
     output reg [3:0] alu_code,
     output ext16_unsigned,
@@ -508,7 +509,8 @@ module controller(
                             || ((_mflo || _mfhi || _mfc0) && t3)
                             || (t4 && _clz);
     assign GR_R1_out    = (t3 && (_r_sum_t || _i_sum_t || _b_branch || _l_load || _jr || _md || _clz||_teq)) 
-                            || (t4 && (_jalr));
+                            || (t4 && (_jalr))
+                            || (t3 && (_mtlo || _mthi));
                         // rd is actually rt here
     assign GR_R2_out    = (t3 && (_r_sum_t || _sh_sum_t || _b_branch || _md 
                             || _mtc0 || _mtlo || _mthi||_teq))
@@ -532,6 +534,9 @@ module controller(
 
     // andi, ori, xori
     assign ext16_unsigned = _ori || _andi || _xori;
+
+    // 
+    assign GR_R1_ADDR_RD = _mfhi || _mthi;
 /*-----------------------------------------------------------------------------------------------*/
     // MULT, DIV
     assign mult_signed  = _mult;
@@ -689,7 +694,7 @@ module controller(
     parameter MUX_GR_W_DATA_CLZ       = 3'd5;
     parameter MUX_GR_W_DATA_NONE      = 3'd7;
     always @(*) begin
-        if(_r_sum_t || _i_sum_t || _sh_sum_t || _clz) // from Z to
+        if(_r_sum_t || _i_sum_t || _sh_sum_t) // from Z to
             MUX_GR_W_DATA <= MUX_GR_W_DATA_Z;
         else if(_l_load)
             MUX_GR_W_DATA <= MUX_GR_W_DATA_DRr;

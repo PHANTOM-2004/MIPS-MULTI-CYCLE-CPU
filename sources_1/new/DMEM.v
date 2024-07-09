@@ -108,16 +108,16 @@ module DMEM(
         else if(write) begin 
             if(is_half) begin
                 case(_4byte_inner_pos)
-                    2'b00,2'b01: memory[_4byte_addr][15:0]  <= wdata[15:0];
-                    2'b10,2'b11: memory[_4byte_addr][31:16] <= wdata[31:16];
+                    2'b00,2'b01: memory[_4byte_addr][15:0]  <= wdata[15:0];// store least 
+                    2'b10,2'b11: memory[_4byte_addr][31:16] <= wdata[15:0];// significant 16 bit
                 endcase
             end
             else if(is_byte) begin
                 case(_4byte_inner_pos)
-                    2'b00:  memory[_4byte_addr][7:0]    <= wdata[7:0];
-                    2'b01:  memory[_4byte_addr][15:8]   <= wdata[15:8];
-                    2'b10:  memory[_4byte_addr][23:16]  <= wdata[23:16];
-                    2'b11:  memory[_4byte_addr][31:24]  <= wdata[31:24];
+                    2'b00:  memory[_4byte_addr][7:0]    <= wdata[7:0];//store least significant 8 byte
+                    2'b01:  memory[_4byte_addr][15:8]   <= wdata[7:0];
+                    2'b10:  memory[_4byte_addr][23:16]  <= wdata[7:0];
+                    2'b11:  memory[_4byte_addr][31:24]  <= wdata[7:0];
                 endcase
             end
             else memory[_4byte_addr] <= wdata;

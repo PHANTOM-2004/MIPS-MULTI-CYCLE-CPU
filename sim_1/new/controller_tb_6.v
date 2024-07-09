@@ -124,10 +124,7 @@ controller inst(
     .clk(clk),
     .rst(rst),
     .mask_update(mask_update),
-    .next_update(next_update),
     .instr_type(instr_type),
-    .branch_on(branch_on),
-    .teq_equal(teq_equal),
     .mult_busy(mult_busy),
     .div_busy(busy),
     .IM_R(IM_R),
@@ -173,6 +170,15 @@ controller inst(
 
     // wire [3:0] T_state = inst.cycle + 4'b1;
     wire [3:0] cycle   = inst.cycle;
+    wire [31:0] mult_a = inst_mult.a;
+    wire [31:0] mult_b = inst_mult.b;
+    wire [63:0] res = inst_mult.res;
+    wire [63:0] s_0 = inst_mult.s_0;
+    wire [63:0] s_1 = inst_mult.s_1;
+    wire [63:0] add1_0_1 = inst_mult.add1_0_1;
+    wire [2:0] cnt = inst_mult.cnt;
+
+
     reg [31:0] a;
     reg [31:0] b;
     wire [63:0] mult_ans;

@@ -51,6 +51,7 @@ module CP0(
             CP0_ADDR_CAUSE:     rdata <= Cause;
             CP0_ADDR_EPC:       rdata <= EPC;
             CP0_ADDR_STATUS:    rdata <= Status;
+            default:            rdata <= 32'h0;
             endcase
         end
         else rdata <= 32'h0;

@@ -36,8 +36,57 @@ module instr_tb;
     wire next_update_ir = uut.sccpu.mpcir.next_update_ir;
     wire next_update_pc = uut.sccpu.mpcir.next_update_pc;
 
+
+	wire [2:0] mult_cnt = uut.sccpu.cpu_mult.cnt;
+
+	wire [31:0] LO_rdata = uut.sccpu.LO_rdata;
+	wire [31:0] HI_rdata = uut.sccpu.HI_rdata;
+	wire [31:0] LO_wdata = uut.sccpu.LO_wdata;
+	wire [31:0] HI_wdata = uut.sccpu.HI_wdata;
+
+	wire [31:0] RS_data = uut.sccpu.RS_data;
+
+	wire [31:0] div_q = uut.sccpu.div_q;
+	wire [31:0] div_r = uut.sccpu.div_r;
+
+
+	wire MUX_LO_WDATA_DIV = uut.sccpu.MUX_LO_WDATA_DIV;
+	wire MUX_LO_WDATA_MULT = uut.sccpu.MUX_LO_WDATA_MULT;
+	wire MUX_LO_WDATA_RS  = uut.sccpu.MUX_LO_WDATA_RS;
+
+	wire [31:0] HI_reg   = uut.sccpu.cpu_hi.hi_reg;
+	wire [31:0] LO_reg	 = uut.sccpu.cpu_lo.lo_reg;
+
+	wire HI_in = uut.sccpu.HI_in;
+	wire HI_out = uut.sccpu.HI_out;
+	wire LO_in = uut.sccpu.LO_in;
+	wire LO_out = uut.sccpu.LO_out;
+
+	wire [31:0]mult_a = uut.sccpu.mult_a;
+	wire [31:0]mult_b = uut.sccpu.mult_b;
+	wire [63:0]mult_ans = uut.sccpu.mult_ans;
+	wire mult_busy = uut.sccpu.mult_busy;
+	wire mult_start = uut.sccpu.mult_start;
+
+	wire _mtlo = uut.sccpu.cpu_controller._mtlo;
+	wire _mthi = uut.sccpu.cpu_controller._mthi;
+	wire [5:0] instr_type = uut.sccpu.instr_type;
+
     wire dmem_read = uut.sccpu.dmem_read;
     wire dmem_write = uut.sccpu.dmem_write;
+    wire [6:0]  dmem_address = uut.sccpu.dmem_address;
+    wire [31:0] dmem0 = uut.memory.memory[0];
+    wire [31:0] dmem1 = uut.memory.memory[1];
+	wire [31:0] dmem2 = uut.memory.memory[2];
+	wire [31:0] dmem3 = uut.memory.memory[3];
+	wire [31:0] dmem4 = uut.memory.memory[4];
+	wire [31:0] dmem5 = uut.memory.memory[5];
+
+
+	wire [31:0] _4byte = uut.memory._4byte;
+	wire [31:0] wdata = uut.memory.wdata;
+	wire [4:0] _4byte_addr = uut.memory._4byte_addr;
+	wire [1:0] _4byte_inner_pos = uut.memory._4byte_inner_pos;
 
     wire [31:0] dmem_rdata = uut.sccpu.dmem_rdata;
     wire [31:0] dmem_wdata = uut.sccpu.dmem_wdata;
@@ -56,12 +105,12 @@ module instr_tb;
     wire GR_R1_out  = uut.sccpu.GR_R1_out;
     wire GR_R2_out  = uut.sccpu.GR_R2_out;
 
-    wire [31:0] dmem0 = uut.memory.memory[0];
-    wire [31:0] dmem1 = uut.memory.memory[1];
-    wire [6:0]  dmem_address = uut.sccpu.dmem_address;
 
     wire [3:0] alu_code       = uut.sccpu.cpu_alu.aluc;
     wire [31:0] Z       = uut.sccpu.z_reg.d;
+
+	wire [31:0] CLZ_rdata = uut.sccpu.CLZ_rdata;
+	wire [31:0] CLZ_wdata = uut.sccpu.CLZ_wdata;
 
     wire [31:0] alu_a = uut.sccpu.alu_a;
     wire [31:0] alu_b = uut.sccpu.alu_b;
@@ -76,7 +125,7 @@ module instr_tb;
     wire zero = uut.sccpu.zero;
 
     initial begin
-		file_output = $fopen("./result/cyt_16.26_lwsw.txt");	
+		file_output = $fopen("./result/cyt_54_div.txt");	
 		// Initialize Inputs
 		clk_in = 0;
 		reset = 1;

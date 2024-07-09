@@ -33,9 +33,9 @@ module mux_lo_wdata(
     );
 
     always @(*) begin
-        if(MUX_LO_WDATA_DIV)            MUX_LO_WDATA_IN <= MUX_LO_WDATA_DIV;
-        else if(MUX_LO_WDATA_MULT)      MUX_LO_WDATA_IN <= MUX_LO_WDATA_MULT;
-        else if(MUX_LO_WDATA_RS)        MUX_LO_WDATA_IN <= MUX_LO_WDATA_RS;
+        if(MUX_LO_WDATA_DIV)            MUX_LO_WDATA_IN <= DIV_data;
+        else if(MUX_LO_WDATA_MULT)      MUX_LO_WDATA_IN <= MULT_data;
+        else if(MUX_LO_WDATA_RS)        MUX_LO_WDATA_IN <= RS_data;
         else                            MUX_LO_WDATA_IN <= 32'h0;
     end
     

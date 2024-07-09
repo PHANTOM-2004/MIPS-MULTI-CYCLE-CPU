@@ -74,6 +74,7 @@ module cpu(
 
 /*-----------------------------------------------------------------------------------------------*/
     wire [4:0] cp0_cause_code;
+    wire GR_R1_ADDR_RD;
     wire mask_update;
     wire next_update_pc;
     wire next_update_ir;
@@ -163,6 +164,7 @@ module cpu(
         .next_update_pc(next_update_pc),
         .next_update_ir(next_update_ir),
         //
+        .GR_R1_ADDR_RD(GR_R1_ADDR_RD),
         .cp0_cause_code(cp0_cause_code),
         .ext16_unsigned(ext16_unsigned),
         .alu_code(alu_code),
@@ -324,6 +326,7 @@ module cpu(
     wire [31:0] HI_rdata;
     wire [31:0] HI_wdata;
 
+
     HI cpu_hi(
         .clk(clk),
         .rst(rst),
@@ -406,6 +409,9 @@ module cpu(
         .MUX_GR_W_ADDR(MUX_GR_W_ADDR_IN)
     );
 
+    wire [4:0] GR_raddr1;
+    assign GR_raddr1 = GR_R1_ADDR_RD ? RD_addr : RS_addr;
+
     regfile cpu_ref(
         .clk(clk),
         .rst(rst),
@@ -463,7 +469,7 @@ mux_lo_wdata mlwd(
     .MUX_LO_WDATA_DIV(MUX_LO_WDATA_DIV),
     .MUX_LO_WDATA_MULT(MUX_LO_WDATA_MULT),
     .MUX_LO_WDATA_RS(MUX_LO_WDATA_RS),
-    .DIV_data(div_r),
+    .DIV_data(div_q),
     .MULT_data(mult_ans[31:0]),
     .RS_data(RS_data),
     .MUX_LO_WDATA_IN(LO_wdata)
@@ -473,7 +479,7 @@ mux_hi_wdata mhwd(
     .MUX_HI_WDATA_DIV(MUX_HI_WDATA_DIV),
     .MUX_HI_WDATA_MULT(MUX_HI_WDATA_MULT),
     .MUX_HI_WDATA_RS(MUX_HI_WDATA_RS),
-    .DIV_data(div_q),
+    .DIV_data(div_r),
     .MULT_data(mult_ans[63:32]),
     .RS_data(RS_data),
     .MUX_HI_WDATA_IN(HI_wdata)

@@ -1,5 +1,3 @@
-`timescale 1ns / 1ps
-
 module MULT(
     input clk,
     input rst,
@@ -7,7 +5,7 @@ module MULT(
     input mult_signed,
     input [31:0] a,
     input [31:0] b,
-    output [63:0] z,
+    output reg [63:0] z,
     output reg busy
     );
 
@@ -83,10 +81,11 @@ module MULT(
     reg [63:0] add4_0_15;
     reg [63:0] add4_16_31;
 
-    reg [2:0] cnt; //total 5 times;
+    reg [2:0] cnt;
+
 
     always @(posedge clk or posedge rst) begin
-        if (rst || start) begin
+        if (rst) begin
             res         <=0;
             s_0         <=0;
             s_1         <=0;
@@ -158,89 +157,17 @@ module MULT(
             add4_0_15   <=0;
             add4_16_31  <=0;
 
-
+            res <= 0;
             cnt <= 0;
-            busy <= 0;
+            busy<= 0;
         end
-        else if(busy) begin
-            res         <=0;
-            s_0         <=0;
-            s_1         <=0;
-            s_2         <=0;
-            s_3         <=0;
-            s_4         <=0;
-            s_5         <=0;
-            s_6         <=0;
-            s_7         <=0;
-            s_8         <=0;
-            s_9         <=0;
-            s_10        <=0;
-            s_11        <=0;
-            s_12        <=0;
-            s_13        <=0;
-            s_14        <=0;
-            s_15        <=0;
-            s_16        <=0;
-            s_17        <=0;
-            s_18        <=0;
-            s_19        <=0;
-            s_20        <=0;
-            s_21        <=0;
-            s_22        <=0;
-            s_23        <=0;
-            s_24        <=0;
-            s_25        <=0;
-            s_26        <=0;
-            s_27        <=0;
-            s_28        <=0;
-            s_29        <=0;
-            s_30        <=0;
-            s_31        <=0;
-
-            t_a         <=0;
-            t_b         <=0;
-        
-            add1_0_1    <=0;
-            add1_2_3    <=0;
-            add1_4_5    <=0;
-            add1_6_7    <=0;
-            add1_8_9    <=0;
-            add1_10_11  <=0;
-            add1_12_13  <=0;
-            add1_14_15  <=0;
-            add1_16_17  <=0;
-            add1_18_19  <=0;
-            add1_20_21  <=0;
-            add1_22_23  <=0;
-            add1_24_25  <=0;
-            add1_26_27  <=0;
-            add1_28_29  <=0;
-            add1_30_31  <=0;
-        
-            add2_0_3    <=0;
-            add2_4_7    <=0;
-            add2_8_11   <=0;
-            add2_12_15  <=0;
-            add2_16_19  <=0;
-            add2_20_23  <=0;
-            add2_24_27  <=0;
-            add2_28_31  <=0;
-
-            add3_0_7    <=0;
-            add3_8_15   <=0;
-            add3_16_23  <=0;
-            add3_24_31  <=0;
-
-            add4_0_15   <=0;
-            add4_16_31  <=0;
-
-
+        else if(start) begin
             cnt <= 0;
             busy <= 1;
-        end
-        else begin
             t_a <= mult_signed ? (a[31] ? (~a + 32'b1) : a) : a;
             t_b <= mult_signed ? (b[31] ? (~b + 32'b1) : b) : b;
+        end
+        else begin
 
             s_0  <= t_b[ 0] ? {32'b0, t_a}         : 64'b0;
             s_1  <= t_b[ 1] ? {31'b0, t_a,  1'b0}  : 64'b0;
@@ -312,10 +239,10 @@ module MULT(
             res <= add4_0_15 + add4_16_31;
 
             cnt <= cnt + 1;
-            if(cnt == 5) busy <= 0;
+            if(cnt == 3'd5) busy <= 0;
+
+            z <= mult_signed ? (a[31] == b[31] ? res : ~res + 64'b1) : res;
         end
     end
 
-    assign z = mult_signed ? (a[31] == b[31] ? res : ~res + 64'b1) : res;
 endmodule
-
