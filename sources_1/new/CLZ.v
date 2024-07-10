@@ -29,29 +29,32 @@ module CLZ(
     output reg busy
     );
 
-    reg [4:0] cnt;
+    reg [5:0] cnt;
     reg [4:0] pos;
 
     always @(posedge clk or posedge rst) begin
         if(rst) begin
-            cnt     <= 5'b0;
+            cnt     <= 6'b0;
             pos     <= 5'b11111;
             busy    <= 1'b0;
         end
         else if(start)begin
             busy    <= 1'b1;
-            cnt     <= 5'b0;
+            cnt     <= 6'b0;
             pos     <= 5'b11111;
         end
-        else begin
-            if(clz_data_in[pos] || !pos) busy <= 0;
+        else if(busy) begin
+            if(clz_data_in[pos]) busy <= 0;
             else  begin 
+                if(!pos) busy <= 0;
+                else begin 
+                    pos <= pos - 5'b1;
+                end
                 cnt <= cnt + 1;
-                pos <= pos - 1;
             end
         end
     end
 
-    assign clz_ans_out = cnt;
+    assign clz_ans_out = {26'b0 , cnt};
 
 endmodule

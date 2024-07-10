@@ -37,6 +37,7 @@ module controller(
     output mask_update,
     output next_update_pc,
     output next_update_ir,
+    output pc_for_final_test_update,
     /*--------------------*/
     output reg [4:0] cp0_cause_code,
     output GR_R1_ADDR_RD,
@@ -494,7 +495,8 @@ module controller(
     assign DRr_in       = _l_load && t4;
     assign DRr_out      = _l_load && t5;
     // Z
-    assign Z_in         = t1 || (t3 && (_r_sum_t || _i_sum_t || _sh_sum_t || _l_load || _s_store || _b_branch))
+    assign Z_in         = t1 || (t3 && (_r_sum_t || _i_sum_t || _sh_sum_t ||
+                                 _l_load || _s_store || _b_branch || _teq))
                             || (_b_branch && t5) 
                             || (_teq && t7)
                             || (_bs && t5);
@@ -511,7 +513,10 @@ module controller(
                             || (t4 && _clz);
     assign GR_R1_out    = (t3 && (_r_sum_t || _i_sum_t || _b_branch || _l_load || _jr || _md || _clz||_teq)) 
                             || (t4 && (_jalr))
-                            || (t3 && (_mtlo || _mthi));
+                            || (t3 && (_mtlo || _mthi))
+                            || (t3 && _s_store)
+                            ;
+
                         // rd is actually rt here
     assign GR_R2_out    = (t3 && (_r_sum_t || _sh_sum_t || _b_branch || _md 
                             || _mtc0 || _mtlo || _mthi||_teq))
@@ -581,6 +586,7 @@ module controller(
     assign next_update_ir = t2;//刚取到的指令
     assign next_update_pc = t1;
     assign mask_update = is_last_cycle;//指令最后一个周期
+    assign pc_for_final_test_update = is_last_cycle;
  /*-----------------------------------------------------------------------------------------------*/
 
 
@@ -644,7 +650,8 @@ module controller(
     always @(*) begin
         if(t1) begin MUXT_ALU_A <= MUXT_ALU_A_PC; MUXT_ALU_B <= MUXT_ALU_B_4; end
         else if(_b_branch) begin
-            if(t3)      begin MUXT_ALU_A <= MUXT_ALU_A_RS;   MUXT_ALU_B <= MUXT_ALU_B_RT;    end
+            if(t3)      begin MUXT_ALU_A <= MUXT_ALU_A_RS;   
+                              MUXT_ALU_B <= _bgez ? MUXT_ALU_B_0 : MUXT_ALU_B_RT;    end
             else if(t5) begin MUXT_ALU_A <= MUXT_ALU_A_PC;MUXT_ALU_B <= MUXT_ALU_B_EXT18;  end
             else        begin MUXT_ALU_A <= MUXT_ALU_A_NONE; MUXT_ALU_B <= MUXT_ALU_B_NONE;   end
         end

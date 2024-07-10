@@ -24,17 +24,13 @@ module instr_tb;
 	reg [31:0] pc_pre;
 	reg [31:0] inst_pre;
 	//reg [31:0] reg0,reg1,reg2,reg3,reg4,reg5,reg6,reg7,reg8,reg9,reg10,reg11,reg12,reg13,reg14,reg15,reg16,reg17,reg18,reg19,reg20,reg21,reg22,reg23,reg24,reg25,reg26,reg27,reg28,reg29,reg30,reg31;
-	
-	wire [31:0] mask_pc_current = uut.sccpu.mpcir.mask_pc_current;
-    wire [31:0] mask_ir_current = uut.sccpu.mpcir.mask_ir_current; 
-	wire [31:0] next_pc = uut.sccpu.mpcir.next_pc; 
-    wire [31:0] next_ir = uut.sccpu.mpcir.next_ir; 
-    wire [2:0]  cycle   = uut.sccpu.cpu_controller.cycle;
     wire [31:0]  PC      = uut.sccpu.cpu_pc.pc_reg;
     wire [31:0] IR      = uut.sccpu.cpu_ir.IR_reg;
-    wire mask_update    = uut.sccpu.mpcir.mask_update;
-    wire next_update_ir = uut.sccpu.mpcir.next_update_ir;
-    wire next_update_pc = uut.sccpu.mpcir.next_update_pc;
+    wire [2:0]  cycle   = uut.sccpu.cpu_controller.cycle;
+
+	wire [31:0] cp0_cause_from_ir = uut.sccpu.cp0_cause_from_ir;
+	wire MUXT_CP0_WDATA_IR = uut.sccpu.cpu_controller.MUXT_CP0_WDATA_IR;
+
 
 	// wire [31:0] Cause = ;
 	wire MUXT_CP0_W_CAUSE 	= uut.sccpu.cpu_controller.MUXT_CP0_W_CAUSE; // w地址
@@ -47,17 +43,56 @@ module instr_tb;
 
 	wire CP0_Rd_in = uut.sccpu.cpu_controller.CP0_Rd_in;
 	wire CP0_Rd_out = uut.sccpu.cpu_controller.CP0_Rd_out;
-	wire [31:0] RT_data = uut.sccpu.RT_data;
 
 	wire [4:0] CP0_Rdaddr_r = uut.sccpu.cpu_cp0.Rdaddr_r;
 	wire [4:0] CP0_Rdaddr_w = uut.sccpu.cpu_cp0.Rdaddr_w;
 	wire [31:0] CP0_rdata   = uut.sccpu.cpu_cp0.rdata;
 
+	wire [31:0] t_status_reg 	= uut.sccpu.tst.t_status_reg;
+	wire [31:0] t_status_wdata	= uut.sccpu.t_status_wdata;
+	wire [31:0] t_status_rdata  = uut.sccpu.t_status_rdata;
 	// Cause
 	wire [31:0] CP0_8		= uut.sccpu.cpu_cp0.cp0_array[8];
 	wire [31:0] CP0_Cause	= uut.sccpu.cpu_cp0.cp0_array[13];
 	wire [31:0] CP0_EPC		= uut.sccpu.cpu_cp0.cp0_array[14];
 	wire [31:0] CP0_Status  = uut.sccpu.cpu_cp0.cp0_array[12];
+
+	wire [31:0] DRr_reg = uut.sccpu.cpu_drr.DRr_reg;
+    wire [3:0] alu_code       = uut.sccpu.cpu_alu.aluc;
+    wire [31:0] Z       = uut.sccpu.z_reg.d;
+	wire [2:0] muxt_alu_a = uut.sccpu.cpu_controller.MUXT_ALU_A;
+	wire [2:0] muxt_alu_b = uut.sccpu.cpu_controller.MUXT_ALU_B;
+	wire [31:0] RS_data = uut.sccpu.RS_data;
+	wire [31:0] RT_data = uut.sccpu.RT_data;
+
+	wire branch_on = uut.sccpu.cpu_controller.branch_on;
+
+	wire GR_in		= uut.sccpu.GR_in;
+    wire [31:0] alu_a = uut.sccpu.alu_a;
+    wire [31:0] alu_b = uut.sccpu.alu_b;
+    wire [2:0] MUXT_ALU_A = uut.sccpu.cpu_controller.MUXT_ALU_A;
+    wire [31:0] PC_rdata =uut.sccpu.PC_rdata;
+    wire ext16_unsigned = uut.sccpu.cpu_controller.ext16_unsigned;
+    wire [31:0]ext16_data = uut.sccpu.EXT16_data;
+    wire [31:0]gr_wdata = uut.sccpu.MUX_GR_W_DATA_IN;
+    wire [4:0] gr_waddr = uut.sccpu.MUX_GR_W_ADDR_IN;
+    wire [2:0] gr_wdata_controller = uut.sccpu.MUX_GR_W_DATA;
+    wire [2:0] pc_sel = uut.sccpu.cpu_controller.MUXT_PC_W_DATA;
+    wire zero = uut.sccpu.zero;
+	
+	wire [31:0] mask_pc_current = uut.sccpu.mpcir.mask_pc_current;
+    wire [31:0] mask_ir_current = uut.sccpu.mpcir.mask_ir_current; 
+	wire [31:0] next_pc = uut.sccpu.mpcir.next_pc; 
+    wire [31:0] next_ir = uut.sccpu.mpcir.next_ir; 
+
+
+	wire [31:0] CLZ_rdata = uut.sccpu.CLZ_rdata;
+	wire [31:0] CLZ_wdata = uut.sccpu.CLZ_wdata;
+    wire mask_update    = uut.sccpu.mpcir.mask_update;
+    wire next_update_ir = uut.sccpu.mpcir.next_update_ir;
+    wire next_update_pc = uut.sccpu.mpcir.next_update_pc;
+	wire [31:0] reg29 = uut.sccpu.cpu_ref.array_reg[29];
+
 
 
 	wire [2:0] mult_cnt = uut.sccpu.cpu_mult.cnt;
@@ -67,7 +102,6 @@ module instr_tb;
 	wire [31:0] LO_wdata = uut.sccpu.LO_wdata;
 	wire [31:0] HI_wdata = uut.sccpu.HI_wdata;
 
-	wire [31:0] RS_data = uut.sccpu.RS_data;
 
 	wire [31:0] div_q = uut.sccpu.div_q;
 	wire [31:0] div_r = uut.sccpu.div_r;
@@ -128,26 +162,8 @@ module instr_tb;
     wire GR_R2_out  = uut.sccpu.GR_R2_out;
 
 
-    wire [3:0] alu_code       = uut.sccpu.cpu_alu.aluc;
-    wire [31:0] Z       = uut.sccpu.z_reg.d;
-
-	wire [31:0] CLZ_rdata = uut.sccpu.CLZ_rdata;
-	wire [31:0] CLZ_wdata = uut.sccpu.CLZ_wdata;
-
-    wire [31:0] alu_a = uut.sccpu.alu_a;
-    wire [31:0] alu_b = uut.sccpu.alu_b;
-    wire [2:0] MUXT_ALU_A = uut.sccpu.cpu_controller.MUXT_ALU_A;
-    wire [31:0] PC_rdata =uut.sccpu.PC_rdata;
-    wire ext16_unsigned = uut.sccpu.cpu_controller.ext16_unsigned;
-    wire [31:0]ext16_data = uut.sccpu.EXT16_data;
-    wire [31:0]gr_wdata = uut.sccpu.MUX_GR_W_DATA_IN;
-    wire [4:0] gr_waddr = uut.sccpu.MUX_GR_W_ADDR_IN;
-    wire [2:0] gr_wdata_controller = uut.sccpu.MUX_GR_W_DATA;
-    wire [2:0] pc_sel = uut.sccpu.cpu_controller.MUXT_PC_W_DATA;
-    wire zero = uut.sccpu.zero;
-
     initial begin
-		file_output = $fopen("./result/cyt_42.45_mfc0mtc0.txt");	
+		file_output = $fopen("./result/cyt_final.txt");	
 		// Initialize Inputs
 		clk_in = 0;
 		reset = 1;

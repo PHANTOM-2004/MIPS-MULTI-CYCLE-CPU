@@ -148,6 +148,8 @@ module cpu(
     // PC, which
     wire [2:0] MUXT_PC_W_DATA;
 
+    wire pc_for_final_test_update;
+
 /*-----------------------------------------------------------------------------------------------*/
     // controller here
     controller cpu_controller(
@@ -164,6 +166,7 @@ module cpu(
         .mask_update(mask_update),
         .next_update_pc(next_update_pc),
         .next_update_ir(next_update_ir),
+        .pc_for_final_test_update(pc_for_final_test_update),
         //
         .GR_R1_ADDR_RD(GR_R1_ADDR_RD),
         .cp0_cause_code(cp0_cause_code),
@@ -259,8 +262,20 @@ module cpu(
     wire [31:0] instr_for_top;
     wire [31:0] pc_for_top;
 
-    assign instruction_fake = instr_for_top;
-    assign pc_fake = pc_for_top;
+    wire [31:0] PC_CONSTANT;
+
+    // TODO : sth different
+    reg [31:0] pc_for_final_test;
+
+    always@(posedge clk or posedge rst) begin
+        if(rst)
+            pc_for_final_test <= 32'h00400000;
+        else if(pc_for_final_test_update)
+            pc_for_final_test <= PC_CONSTANT;
+    end
+
+    assign instruction_fake =   instruction_read; //instr_for_top;
+    assign pc_fake          =   pc_for_final_test;//pc_for_top;
 
     MASK_PC_IR mpcir(
         .clk(clk),
@@ -316,6 +331,7 @@ module cpu(
         .clk(clk),
         .rst(rst),
         .read(PC_out),
+        .PC_CONSTANT(PC_CONSTANT),
         .write(PC_in),
         .data_in(PC_wdata),
         .data_out(PC_rdata)
@@ -532,7 +548,7 @@ mux_hi_wdata mhwd(
         .MUXT_CP0_WDATA_RT(MUXT_CP0_WDATA_RT),
         .MUXT_CP0_WDATA_T_STATUS(MUXT_CP0_WDATA_T_STATUS),
 
-        .PC_data(pc_of_cur_instr),
+        .PC_data(PC_rdata),
         .Z_data(Z_rdata),
         .t_status_data(t_status_rdata),
         .IR_data(cp0_cause_from_ir),
@@ -644,7 +660,7 @@ mux_hi_wdata mhwd(
     assign dmem_address = Z_rdata;   // fetch memory
 /*-----------------------------------------------------------------------------------------------*/
     
-    assign v_imem_addr = PC_rdata;
+    assign v_imem_addr = PC_CONSTANT; // TODO, sth different for last
     assign dmem_half = DMEM_is_half;
     assign dmem_byte = DMEM_is_byte;
     assign dmem_signed = DMEM_is_signed;

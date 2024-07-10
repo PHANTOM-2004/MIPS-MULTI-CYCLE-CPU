@@ -30,7 +30,7 @@ module muxt_cp0_w_addr(
     output reg [4:0]MUXT_CP0_W_ADDR//
     );
 
-    parameter CP0_ADDR_CAUSE = 5'd12;
+    parameter CP0_ADDR_CAUSE = 5'd13;
     parameter CP0_ADDR_EPC   = 5'd14;
     parameter CP0_ADDR_STATUS= 5'd12;
     always @(*) begin
