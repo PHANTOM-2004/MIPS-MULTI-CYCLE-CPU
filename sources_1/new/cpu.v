@@ -114,6 +114,7 @@ module cpu(
     wire MUXT_CP0_W_EPC;
     wire MUXT_CP0_W_STATUS;
     wire MUXT_CP0_W_CAUSE;
+    wire MUXT_CP0_W_RD;
     // CP0 : which data to select
     wire MUXT_CP0_WDATA_PC;
     wire MUXT_CP0_WDATA_Z;
@@ -123,7 +124,7 @@ module cpu(
     // CP0: read select
     wire MUXT_CP0_R_RD;
     wire MUXT_CP0_R_EPC;
-    wire MUXT_CP0_R_SATUS;
+    wire MUXT_CP0_R_STATUS;
     // HILO: which to select
     wire MUX_HI_WDATA_RS;
     wire MUX_HI_WDATA_MULT;
@@ -201,6 +202,7 @@ module cpu(
         .MUXT_CP0_W_EPC(MUXT_CP0_W_EPC),
         .MUXT_CP0_W_STATUS(MUXT_CP0_W_STATUS),
         .MUXT_CP0_W_CAUSE(MUXT_CP0_W_CAUSE),
+        .MUXT_CP0_W_RD(MUXT_CP0_W_RD),
         // CP0 : which data to select
         .MUXT_CP0_WDATA_PC(MUXT_CP0_WDATA_PC),
         .MUXT_CP0_WDATA_Z(MUXT_CP0_WDATA_Z),
@@ -210,7 +212,7 @@ module cpu(
         // CP0: read select
         .MUXT_CP0_R_RD(MUXT_CP0_R_RD),
         .MUXT_CP0_R_EPC(MUXT_CP0_R_EPC),
-        .MUXT_CP0_R_SATUS(MUXT_CP0_R_SATUS),
+        .MUXT_CP0_R_STATUS(MUXT_CP0_R_STATUS),
         // HILO: which to select
         .MUX_HI_WDATA_RS(MUX_HI_WDATA_RS),
         .MUX_HI_WDATA_MULT(MUX_HI_WDATA_MULT),
@@ -395,6 +397,7 @@ module cpu(
         .LO_data(LO_rdata),
         .PC_data(PC_rdata), 
         .CLZ_data(CLZ_rdata),
+        .CP0_data(CP0_rdata),
         .MUX_GR_W_DATA_IN(MUX_GR_W_DATA_IN)
     );
 
@@ -506,14 +509,16 @@ mux_hi_wdata mhwd(
         .MUXT_CP0_W_CAUSE(MUXT_CP0_W_CAUSE),
         .MUXT_CP0_W_EPC(MUXT_CP0_W_EPC),
         .MUXT_CP0_W_STATUS(MUXT_CP0_W_STATUS),
+        .MUXT_CP0_W_RD(MUXT_CP0_W_RD),
+        .CP0_RD(RD_addr),
         .MUXT_CP0_W_ADDR(CP0_Rdaddr_w)
     );
 
     muxt_cp0_r_addr mcra(
         .MUXT_CP0_R_RD(MUXT_CP0_R_RD),
-        .MUXT_CP0_R_SATUS(MUXT_CP0_R_SATUS),
+        .MUXT_CP0_R_STATUS(MUXT_CP0_R_STATUS),
         .MUXT_CP0_R_EPC(MUXT_CP0_R_EPC),
-        .CP0_RD(CP0_Rdaddr_r),
+        .CP0_RD(RD_addr),
         .MUXT_CP0_R_ADDR(CP0_Rdaddr_r)
     );
 

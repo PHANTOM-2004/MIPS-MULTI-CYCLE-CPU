@@ -22,7 +22,7 @@
 
 module muxt_cp0_r_addr(
     input MUXT_CP0_R_RD,
-    input MUXT_CP0_R_SATUS,
+    input MUXT_CP0_R_STATUS,
     input MUXT_CP0_R_EPC,
 
     input [4:0] CP0_RD,
@@ -35,7 +35,7 @@ module muxt_cp0_r_addr(
 
     always @(*) begin
         if(MUXT_CP0_R_RD) MUXT_CP0_R_ADDR <= CP0_RD;
-        else if(MUXT_CP0_R_SATUS) MUXT_CP0_R_ADDR <= CP0_ADDR_STATUS;
+        else if(MUXT_CP0_R_STATUS) MUXT_CP0_R_ADDR <= CP0_ADDR_STATUS;
         else if(MUXT_CP0_R_EPC) MUXT_CP0_R_ADDR <= CP0_ADDR_EPC;
         else MUXT_CP0_R_ADDR <= 5'b00000;
     end

@@ -36,6 +36,29 @@ module instr_tb;
     wire next_update_ir = uut.sccpu.mpcir.next_update_ir;
     wire next_update_pc = uut.sccpu.mpcir.next_update_pc;
 
+	// wire [31:0] Cause = ;
+	wire MUXT_CP0_W_CAUSE 	= uut.sccpu.cpu_controller.MUXT_CP0_W_CAUSE; // w地址
+	wire MUXT_CP0_W_EPC		= uut.sccpu.cpu_controller.MUXT_CP0_W_EPC;
+	wire MUXT_CP0_W_STATUS	= uut.sccpu.cpu_controller.MUXT_CP0_W_STATUS;
+
+	wire MUXT_CP0_R_RD		= uut.sccpu.cpu_controller.MUXT_CP0_R_RD;
+	wire MUXT_CP0_R_STATUS	= uut.sccpu.cpu_controller.MUXT_CP0_R_STATUS;
+	wire MUXT_CP0_R_EPC		= uut.sccpu.cpu_controller.MUXT_CP0_R_EPC;
+
+	wire CP0_Rd_in = uut.sccpu.cpu_controller.CP0_Rd_in;
+	wire CP0_Rd_out = uut.sccpu.cpu_controller.CP0_Rd_out;
+	wire [31:0] RT_data = uut.sccpu.RT_data;
+
+	wire [4:0] CP0_Rdaddr_r = uut.sccpu.cpu_cp0.Rdaddr_r;
+	wire [4:0] CP0_Rdaddr_w = uut.sccpu.cpu_cp0.Rdaddr_w;
+	wire [31:0] CP0_rdata   = uut.sccpu.cpu_cp0.rdata;
+
+	// Cause
+	wire [31:0] CP0_8		= uut.sccpu.cpu_cp0.cp0_array[8];
+	wire [31:0] CP0_Cause	= uut.sccpu.cpu_cp0.cp0_array[13];
+	wire [31:0] CP0_EPC		= uut.sccpu.cpu_cp0.cp0_array[14];
+	wire [31:0] CP0_Status  = uut.sccpu.cpu_cp0.cp0_array[12];
+
 
 	wire [2:0] mult_cnt = uut.sccpu.cpu_mult.cnt;
 
@@ -101,7 +124,6 @@ module instr_tb;
     wire [31:0] DRw_rdata = uut.sccpu.DRw_rdata;
     wire [31:0] DRw_wdata = uut.sccpu.DRw_wdata;
 
-    wire [31:0] RT_data = uut.sccpu.RT_data;
     wire GR_R1_out  = uut.sccpu.GR_R1_out;
     wire GR_R2_out  = uut.sccpu.GR_R2_out;
 
@@ -125,7 +147,7 @@ module instr_tb;
     wire zero = uut.sccpu.zero;
 
     initial begin
-		file_output = $fopen("./result/cyt_54_div.txt");	
+		file_output = $fopen("./result/cyt_42.45_mfc0mtc0.txt");	
 		// Initialize Inputs
 		clk_in = 0;
 		reset = 1;

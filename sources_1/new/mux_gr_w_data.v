@@ -29,6 +29,7 @@ module mux_gr_w_data(
     input [31:0] LO_data,
     input [31:0] PC_data,
     input [31:0] CLZ_data,
+    input [31:0] CP0_data,
 
     output reg [31:0] MUX_GR_W_DATA_IN
     );
@@ -38,6 +39,7 @@ module mux_gr_w_data(
     parameter MUX_GR_W_DATA_LO        = 3'd3;
     parameter MUX_GR_W_DATA_PC        = 3'd4;
     parameter MUX_GR_W_DATA_CLZ       = 3'd5;
+    parameter MUX_GR_W_DATA_CP0       = 3'd6;
     parameter MUX_GR_W_DATA_NONE      = 3'd7;
 
     always @(*) begin
@@ -48,6 +50,7 @@ module mux_gr_w_data(
             MUX_GR_W_DATA_LO:      MUX_GR_W_DATA_IN <= LO_data;
             MUX_GR_W_DATA_PC:      MUX_GR_W_DATA_IN <= PC_data;
             MUX_GR_W_DATA_CLZ:     MUX_GR_W_DATA_IN <= CLZ_data;
+            MUX_GR_W_DATA_CP0:     MUX_GR_W_DATA_IN <= CP0_data;
             default:               MUX_GR_W_DATA_IN <= 32'h0;
         endcase
     end

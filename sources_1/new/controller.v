@@ -76,6 +76,7 @@ module controller(
     output MUXT_CP0_W_EPC,
     output MUXT_CP0_W_STATUS,
     output MUXT_CP0_W_CAUSE,
+    output MUXT_CP0_W_RD,
     // CP0 : which data to select
     output MUXT_CP0_WDATA_PC,
     output MUXT_CP0_WDATA_Z,      
@@ -85,7 +86,7 @@ module controller(
     // CP0: read select
     output MUXT_CP0_R_RD,
     output MUXT_CP0_R_EPC,
-    output MUXT_CP0_R_SATUS,
+    output MUXT_CP0_R_STATUS,
     // HILO: which to select
     output MUX_HI_WDATA_RS,//1 for Rs, 0 for Z
     output MUX_HI_WDATA_MULT,
@@ -616,12 +617,13 @@ module controller(
     assign MUXT_CP0_W_CAUSE  =  MUXT_CP0_WDATA_IR ; //(t6 && _teq) || (t4 && _bs) ;
     assign MUXT_CP0_W_EPC    = (t5 && _teq) || (t3 && _bs) ;
     assign MUXT_CP0_W_STATUS = MUXT_CP0_WDATA_T_STATUS || MUXT_CP0_WDATA_Z; // t_status和ZX写入cp0.status
+    assign MUXT_CP0_W_RD     = t3 && _mtc0;
     //(t8 && _teq) || (t6 && _bs) || (t3 && _eret);
 
   /*-----------------------------------------------------------------------------------------------*/
     //TODO: MUX_CP0_RADDR,
     assign MUXT_CP0_R_RD    = t3 && _mfc0;
-    assign MUXT_CP0_R_SATUS = (t7 && _teq) || (t5 && _bs);
+    assign MUXT_CP0_R_STATUS = (t7 && _teq) || (t5 && _bs);
     assign MUXT_CP0_R_EPC   = t4 && _eret;
 
   /*-----------------------------------------------------------------------------------------------*/
@@ -692,6 +694,7 @@ module controller(
     parameter MUX_GR_W_DATA_LO        = 3'd3;
     parameter MUX_GR_W_DATA_PC        = 3'd4;
     parameter MUX_GR_W_DATA_CLZ       = 3'd5;
+    parameter MUX_GR_W_DATA_CP0       = 3'd6;
     parameter MUX_GR_W_DATA_NONE      = 3'd7;
     always @(*) begin
         if(_r_sum_t || _i_sum_t || _sh_sum_t) // from Z to
@@ -706,6 +709,8 @@ module controller(
             MUX_GR_W_DATA <= MUX_GR_W_DATA_HI;
         else if(_clz)
             MUX_GR_W_DATA <= MUX_GR_W_DATA_CLZ;
+        else if(_mfc0)
+            MUX_GR_W_DATA <= MUX_GR_W_DATA_CP0;
         else
             MUX_GR_W_DATA <= MUX_GR_W_DATA_NONE;
     end
