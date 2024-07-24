@@ -18,7 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
+// `define FINAL_TEST
 
 module cpu(
     input clk,
@@ -266,7 +266,6 @@ module cpu(
 
     // TODO : sth different
     reg [31:0] pc_for_final_test;
-
     always@(posedge clk or posedge rst) begin
         if(rst)
             pc_for_final_test <= 32'h00400000;
@@ -274,8 +273,14 @@ module cpu(
             pc_for_final_test <= PC_CONSTANT;
     end
 
+`ifdef FINAL_TEST
     assign instruction_fake =   instruction_read; //instr_for_top;
     assign pc_fake          =   pc_for_final_test;//pc_for_top;
+`else
+    assign instruction_fake = instr_for_top;
+    assign pc_fake          = pc_for_top;
+`endif
+
 
     MASK_PC_IR mpcir(
         .clk(clk),
