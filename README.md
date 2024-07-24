@@ -33,7 +33,7 @@ This project is finished on `vivado 2023.2`.
 - `tb`结尾的均为测试, 其中部分测试可能由于后续模块文件的修改而编译错误. 使用的时候关注一下`error`.
 - 两个`.xlsx`是对应的接口设计和时序设计.
 - `imem` 是`ip core`自己使用`distributed memory`.
-- `.sh`是生产`.coe`的`shell`脚本.
+- `.sh`是生成`.coe`的`shell`脚本.
 
 ```
 .
